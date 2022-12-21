@@ -37,3 +37,7 @@ VALUES
     ("Frodo", "Baggins", 10, 9),
     ("Meriadoc", "Brandybuck", 11, 9),
     ("Peregrin", "Took", 12, 9);
+
+SELECT * FROM department;
+SELECT * FROM role;
+SELECT * FROM employee;
