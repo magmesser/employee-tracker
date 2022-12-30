@@ -33,30 +33,39 @@ function viewRoles() {
 }
 // THEN I am prompted to enter the title, salary, and department (department_id) for the role and that role is added to the database
 function addRole() {
-  var dept = `SELECT * FROM department`;
+	var query = `SELECT * FROM department`;
 
-  db.query(dept, function (err, res) {
-    if (err) throw err;
+	db.query(query, function (err, res) {
+		if (err) throw err;
+	
+		const departmentChoices = res.map(({ id, name }) => ({
+			value: id,
+			name: `${id} ${name}`,
+		}));
 
-    const departmentChoices = res.map(({ id, name }) => ({
-        value: id,
-        name: `${id} ${name}`,
-    }));
-  
-   inquirer
-    .prompt(prompts.addRolePrompt(departmentChoices))
-    .then(function (answer) {
-      const sql = `INSERT INTO role (title, salary, department_id) VALUES ('${answer.title}', '${answer.salary}', '${answer.dept}')`;
-      db.query(
-        sql,
-        (err, res) => {
-          if (err) throw err;
-          console.log(`\n *New Role ~${answer.title}~ Added* \n`);
-          viewRoles();
-        },
-      );
-    });
-});
-  //   startMenu();
+		inquirer
+			.prompt(prompts.addRolePrompt(departmentChoices))
+			.then(function (answer) {
+                // ***different 
+				var query = `INSERT INTO role SET ?`;
+				// Insert Title, Salary and Department into Role Array
+				db.query(
+					query,
+					{
+						title: answer.title,
+						salary: answer.salary,
+						department_id: answer.dept,
+					},
+					function (err, res) {
+						if (err) throw err;
+
+						console.log("\n" + res.affectedRows + " role created");
+						console.log("\n<<<<<<<<<<<<<<<<<<<< ⛔ >>>>>>>>>>>>>>>>>>>>\n");
+
+						viewRoles();
+					},
+				);
+			});
+	});
 };
 addRole();

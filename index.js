@@ -1,8 +1,9 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const cTable = require("console.table");
+const prompts = require("./config/inquirer");
 
-//
+// connection function
 const db = mysql.createConnection(
   {
     host: "127.0.0.1",
@@ -154,7 +155,33 @@ async function addDepartment() {
 // Add a role
 // WHEN I choose to add a role
 // THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
-function addRole() {};
+function addRole() {
+  var dept = `SELECT * FROM department`;
+
+  db.query(dept, function (err, res) {
+    if (err) throw err;
+
+    const departmentChoices = res.map(({ id, name }) => ({
+        value: id,
+        name: `${id} ${name}`,
+    }));
+  
+   inquirer
+    .prompt(prompts.addRolePrompt(departmentChoices))
+    .then(function (answer) {
+      const sql = `INSERT INTO role (title, salary, department_id) VALUES ('${answer.title}', '${answer.salary}', '${answer.dept}')`;
+      db.query(
+        sql,
+        (err, res) => {
+          if (err) throw err;
+          console.log(`\n *New Role ~${answer.title}~ Added* \n`);
+          viewRoles();
+        },
+      );
+    });
+});
+    startMenu();
+};
 
 // Add an employee
 // WHEN I choose to add an employee
