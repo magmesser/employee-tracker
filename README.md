@@ -1,6 +1,7 @@
 # employee-tracker
 
 npm i inquirer@8.2.4
+chalk@4.1.0
 
 Acceptance Criteria
 
