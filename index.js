@@ -1,6 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
-const chalk = require('chalk');
+const chalk = require("chalk");
 const cTable = require("console.table");
 const prompts = require("./config/inquirer");
 
@@ -28,6 +28,12 @@ function init() {
           break;
         case "View all employees":
           viewEmployees();
+          break;
+        case "View all employees by manager":
+          viewEmpManager();
+          break;
+        case "View all employees by department":
+          viewEmpDepartment();
           break;
         case "Add a department":
           addDepartment();
@@ -102,6 +108,46 @@ function init() {
     });
   }
 
+  // View all employees by manager
+  function viewEmpManager() {
+    const sql = `SELECT m.first_name AS Manager_First, m.last_name AS Manager_Last, e.first_name AS Employee_First, e.last_name AS Employee_Last 
+    FROM employee AS m
+    INNER JOIN employee AS e
+    ON e.manager_id = m.id
+    ORDER BY m.id;
+  `;
+    db.query(sql, (err, res) => {
+      if (err) throw err;
+
+      console.log(
+        chalk.magenta(`\n *Now Viewing: All Employees by Manager* \n`)
+      );
+      console.table(res);
+      startMenu();
+    });
+  }
+
+  // View all employees by department
+  function viewEmpDepartment() {
+    const sql = `SELECT employee.first_name AS First, employee.last_name AS Last, department.name AS Department
+    FROM employee
+    INNER JOIN role
+    ON employee.role_id = role.id
+    INNER JOIN department
+    ON role.department_id = department.id
+    ORDER BY department.name;
+  `;
+    db.query(sql, (err, res) => {
+      if (err) throw err;
+
+      console.log(
+        chalk.magenta(`\n *Now Viewing: All Employees by Department* \n`)
+      );
+      console.table(res);
+      startMenu();
+    });
+  }
+
   // Add a department
   async function addDepartment() {
     const dept = await inquirer
@@ -110,7 +156,9 @@ function init() {
         const sql = `INSERT INTO department (name) VALUES ('${answer.dept}');`;
         db.query(sql, (err, res) => {
           if (err) throw err;
-          console.log(chalk.bgGreen(`\n *New Department ~${answer.dept}~ Added* \n`));
+          console.log(
+            chalk.bgGreen(`\n *New Department ~${answer.dept}~ Added* \n`)
+          );
         });
       });
 
@@ -135,7 +183,9 @@ function init() {
           const sql = `INSERT INTO role (title, salary, department_id) VALUES ('${answer.title}', '${answer.salary}', '${answer.dept}')`;
           db.query(sql, (err, res) => {
             if (err) throw err;
-            console.log(chalk.bgGreen(`\n *New Role ~${answer.title}~ Added* \n`));
+            console.log(
+              chalk.bgGreen(`\n *New Role ~${answer.title}~ Added* \n`)
+            );
             viewRoles();
           });
         });
@@ -168,9 +218,11 @@ function init() {
             const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.first_name}', '${answer.last_name}', '${answer.role}', '${answer.manager}')`;
             db.query(sql, (err, res) => {
               if (err) throw err;
-              console.log(chalk.bgGreen(
-                `\n *New Employee ~${answer.first_name} ${answer.last_name}~ Added* \n`
-              ));
+              console.log(
+                chalk.bgGreen(
+                  `\n *New Employee ~${answer.first_name} ${answer.last_name}~ Added* \n`
+                )
+              );
               viewEmployees();
             });
           });
@@ -183,43 +235,43 @@ function init() {
     var role = `SELECT id, title FROM role`;
     db.query(role, function (err, res) {
       if (err) throw err;
-      
+
       const roleChoices = res.map(({ id, title }) => ({
         value: id,
         name: `${title}`,
       }));
-  
+
       var employee = `SELECT id, first_name, last_name FROM employee`;
       db.query(employee, function (err, res) {
         if (err) throw err;
-  
+
         const employeeChoices = res.map(({ id, first_name, last_name }) => ({
           value: id,
           name: `${first_name} ${last_name}`,
         }));
-  
+
         inquirer
           .prompt(prompts.updateEmployeePrompt(employeeChoices, roleChoices))
           .then(function (answer) {
             const sql = `UPDATE employee SET role_id = ${answer.role} WHERE id = ${answer.employee}`;
             db.query(sql, (err, res) => {
               if (err) throw err;
-              console.log(chalk.bgGreen(
-                `\n *Employee Role Updated* \n`
-              ));
+              console.log(chalk.bgGreen(`\n *Employee Role Updated* \n`));
               viewEmployees();
             });
           });
       });
     });
-  };
+  }
 
   // Exit program
   function exit() {
     setTimeout(function () {
-      console.log(chalk.blue.bold(
-        `\n *Thank you for using Lord of the Employees - the employee tracker program.* \n`
-      ));
+      console.log(
+        chalk.blue.bold(
+          `\n *Thank you for using Lord of the Employees - the employee tracker program.* \n`
+        )
+      );
       return process.exit(22);
     }, 2000);
   }

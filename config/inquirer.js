@@ -9,6 +9,8 @@ module.exports = {
       "View all departments",
       "View all roles",
       "View all employees",
+      "View all employees by manager",
+      "View all employees by department",
       "Add a department",
       "Add a role",
       "Add an employee",
@@ -89,5 +91,5 @@ module.exports = {
     },
   ],
 
-  // Delete Prompts
+  // Delete Prompts - to be added later
 };
