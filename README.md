@@ -4,7 +4,9 @@
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
   ## Description
-  🔮 This project uses SQL and JS with the help of the node packages inquirer, chalk, mysql, and console.table to provide a terminal-based employee tracker program.  
+  🔮 This project uses SQL and JS with the help of the node packages inquirer, chalk, mysql, and console.table to provide a terminal-based employee tracker program.
+  
+  Video Walkthrough: [Click Here](https://drive.google.com/file/d/1y76_hulzSaqx4xzvBzC-JCHqLmHkWm3F/view)   
 
   ## 📚 Table of Contents
   * [🔧 Installation](#installation)
